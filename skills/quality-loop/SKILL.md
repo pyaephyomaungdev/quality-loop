@@ -96,7 +96,9 @@ Fix in this order — each batch's gate is the next batch's foundation:
 | D Polish | motion/spacing normalization, dependency upgrades, doc sync | + full visual pass |
 | E Guardrails | turn the zeros into enforced invariants: CI guards for every "0" claim (token check, bundle-size budget, audit), detector hooks on, reject-path checklist. **Quality that isn't enforced regresses.** | guard script fails on a planted violation |
 
-Inner-loop rules per batch:
+Inner-loop rules per batch (proven recipes for the recurring batches — token sweep, a11y
+sweep, motion cleanup, async RMW hardening — live in `references/fix-batch-playbooks.md`;
+hand the relevant one to the sweep agents):
 
 - **Parallel agents** for mechanical work: one agent per file group, identical instructions + a shared mapping table, each self-verifying (grep clean + typecheck filtered to its files). The coordinator alone runs full suites — this prevents mid-flight false failures between parallel agents.
 - **Verification agent** after each functional batch: an independent read-only agent re-checks every fix landed, hunts collateral damage (diff-stat anomalies, broken assertions, lost conditionals), and reports gaps. Fix the gaps, re-verify — that is the inner loop, and in the source campaign it caught a missing guard, a comment that understated a load-bearing mechanism, and a behavior change on a code path nobody had re-read.
@@ -105,6 +107,16 @@ Inner-loop rules per batch:
 - **Never fake clean.** Unhandled rejection paths, silent export failures, stale-closure guards, and cross-entity contamination are the classic "tests green but broken" residuals — hunt them explicitly with a reject-path checklist.
 
 ## Loop control
+
+**Re-audit rounds are delta-focused, not full replays.** A round-2+ audit covers: (a) files
+changed since the last report (fresh diffs rot fastest), (b) the previous round's residual
+list, (c) ONE full-coverage sweep agent for regression detection. Do not re-run every Phase 0
+explore — the ledger already holds what the first pass settled.
+
+**Focused subsets.** When the user names a subset ("security အရပါ", "perf ဘက်ပါ"), run only
+those category agents, keep the same report format and stop criteria, and record in the ledger
+that the other categories were not covered this round. Never let a focused round overwrite the
+ledger's full-coverage history.
 
 Stop criteria (define in the first report, check in every re-audit):
 

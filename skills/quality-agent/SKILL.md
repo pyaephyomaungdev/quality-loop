@@ -44,17 +44,39 @@ and executed immediately.
 
 ### Phase 3 — Quality loop until converged
 
-Run the `quality-loop` methodology against the change (for UI work with $impeccable dimensions,
-for code with the $improve audit playbook; standalone works too):
+Run the **feature-sized** quality loop against the change (the full multi-category campaign is
+for whole-repo hardening; a single feature needs the same discipline at feature scope):
 
 1. **Gates**: typecheck + full tests + build + lint + security audit — all green before review.
-2. **Audit the change**: read-only verification agent on the new code (fresh eyes, findings only);
-   browser/manual verification of the affected surfaces at representative sizes; detector/scans
-   if the project has them.
+2. **Audit the change**: one read-only verification agent on the new code (fresh eyes, findings
+   only); browser/manual verification of the affected surfaces at representative sizes; detector
+   or linter scans if the project has them.
 3. **Fix batch**: every verified finding → fix → re-run gates → re-verify (inner loop).
 4. **Convergence**: repeat audit→fix until a fresh pass returns **no HIGH/MED-confidence actionable
    findings**, all gates stay green, and manual verification is clean. Cap at 3 audit passes; at
    the cap, report residuals honestly (never fake clean).
+
+If the `quality-loop` skill is installed, follow its report format and ledger conventions so
+feature rounds join the project's existing quality history.
+
+### Resumability — the PROGRESS file
+
+Long runs can outlive a context window or session. At EVERY phase boundary (and after each
+quality round), write the run state to `PROGRESS.md` in the repo root:
+
+```markdown
+# quality-agent progress — <request title>
+- Phase: <1 plan | 2 implement | 3 quality-loop | 4 report> — <what step inside it>
+- Requirements: R1…Rn (with done/pending marks)
+- DECISIONS: <the running list>
+- File map: <planned files with done/pending>
+- Remaining steps: <numbered, specific — "run compileRunner tests", "write Phase 4 report">
+- Gates last seen: <tsc/test/lint/build status>
+```
+
+On any resume (new session, post-compaction), read `PROGRESS.md` FIRST, verify the gates, and
+continue from "Remaining steps" — never re-plan from scratch. Delete the file when the Phase 4
+report is delivered (the report supersedes it).
 
 ### Phase 4 — Report (the user's single review surface)
 

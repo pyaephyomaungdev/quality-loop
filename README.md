@@ -62,7 +62,8 @@ evidence, residuals, "try it in 30 seconds")
 
 Ambiguities are resolved from the codebase itself; every choice is logged in a DECISIONS
 list the user reviews afterwards; only a genuine architectural blocker makes it stop
-mid-flight. It never commits, pushes, or invents secrets.
+mid-flight. Long runs write a `PROGRESS.md` at every phase boundary — a fresh session can
+resume exactly where it left off. It never commits, pushes, or invents secrets.
 
 ## Install
 
