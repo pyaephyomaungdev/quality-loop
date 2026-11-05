@@ -81,6 +81,7 @@ Fix in this order — each batch's gate is the next batch's foundation:
 | B Mechanical sweeps | high-count replacements (colors→tokens, escapes, dead imports) — parallel per-file agents with a shared mapping table + per-file grep verification | tsc + tests + build + grep-clean |
 | C Adoption | finish system adoption (component swaps, hand-rolled → shared), a11y sweep, security/correctness fixes | + visual spot-check |
 | D Polish | motion/spacing normalization, dependency upgrades, doc sync | + full visual pass |
+| E Guardrails | turn the zeros into enforced invariants: CI guards for every "0" claim (token check, bundle-size budget, audit), detector hooks on, reject-path checklist. **Quality that isn't enforced regresses.** | guard script fails on a planted violation |
 
 Inner-loop rules per batch:
 
@@ -111,3 +112,5 @@ Anti-patterns this method exists to prevent: re-reporting rejected findings; dec
 ## Final phase
 
 When a round hits its stop criterion: run the full gates one more time (`scripts/quality-gates.sh` without `--fast`), do end-to-end verification on the flows that changed, sync every ledger/doc touched (design docs, round records, CI), then report to the user **in their language**: what the loops caught (bugs found by verification, not just by audit), before/after numbers, what was deliberately left and why, and the commit-batch recommendation if the working tree is uncommitted.
+
+A campaign is only finished when **Batch E (Guardrails)** is on: every zero you earned must be enforced by CI or a hook, or the next feature quietly spends it. Write each guard so the check derives from the source of truth (e.g. derive the palette from the CSS variables file, not a copied list) and plant a violation once to prove the guard fires.
